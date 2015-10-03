@@ -1,0 +1,49 @@
+$body-bg: #171717;
+$body-color: #B9B9B9;
+
+$header-bg: #102658;
+$header-color: lighten($header-bg, 75%);
+
+body {
+    background: $body-bg;
+    color: $body-color;
+    font-family: "Open Sans", Calibri, Arial, sans-serif;
+}
+
+a {
+    color: inherit;
+}
+
+#page-header {
+    background: $header-bg;
+    color: $header-color;
+    text-shadow: 1px 1px darken($header-bg, 20%);
+
+    a {
+        text-decoration: none;
+    }
+}
+
+#page-logo h1 {
+    font-size: 3em;
+}
+
+#page-navigation {
+    background: darken($header-bg, 2%);
+
+    a {
+        font-size: 20px;
+        transition: background 0.15s;
+
+        &:hover, &:focus {
+            background: darken($header-bg, 4%);
+        }
+    }
+}
+
+#page-content {
+    background: lighten($body-bg, 87%);
+    color: darken($body-color, 50%);
+    line-height: 1.6;
+    font-size: 18px;
+}
