@@ -1,0 +1,21 @@
+[class^="betterhtmlmenu"] { display: none; }
+
+@media (max-width: 450px), (max-device-width: 450px) {
+    [class^="betterhtmlmenu"] {
+        display: inline-block;
+        font-size: 20px;
+        color: initial;
+
+        ~ nav {
+            display: none;
+        }
+
+        &, select {
+            width: 100%
+        }
+    }
+}
+
+#page-navigation ul:not([class~="align-right"]) {
+    float: left;
+}
