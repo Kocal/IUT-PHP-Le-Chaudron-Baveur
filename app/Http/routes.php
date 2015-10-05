@@ -10,23 +10,46 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-
-Route::get('/', function() {
+/**
+ * Routes de base
+ */
+Route::get('/', ['as' => 'index', function() {
     return view('index');
-});
+}]);
 
 Route::get('/products', ['as' => 'products', function() {
     return view('products');
 }]);
 
-Route::get('/sell', ['as' => 'sell', function() {
+Route::get('/sell', ['as' => 'sell', 'middleware' => ['auth'], function() {
     return view('sell');
 }]);
 
+Route::get('/profile', ['as' => 'profile', 'middleware' => ['auth'], function() {
+    return view('profile');
+}]);
+
+/*
+ * Authentification
+ */
 Route::get('auth/login', ['as' => 'login', 'uses' => 'Auth\AuthController@getLogin']);
 Route::post('auth/login', ['as' => 'login', 'uses' => 'Auth\AuthController@postLogin']);
 Route::get('auth/logout', ['as' => 'logout', 'uses' => 'Auth\AuthController@getLogout']);
 
-// Registration routes...
 Route::get('auth/register', ['as' => 'register', 'uses' => 'Auth\AuthController@getRegister']);
 Route::post('auth/register', ['as' => 'register', 'uses' => 'Auth\AuthController@postRegister']);
+
+/*
+ * Administration
+ */
+Route::group(['prefix' => 'admin', 'as' => 'admin::', 'middleware' => 'admin'], function() {
+   Route::get('/', ['as' => 'index', function() {
+       return view('admin.index');
+   }]);
+
+    Route::post('purge', ['as' => 'purge', 'uses' => 'AdminController@purgeAds']);
+});
+
+Route::controllers([
+   'password' => 'Auth\PasswordController',
+]);

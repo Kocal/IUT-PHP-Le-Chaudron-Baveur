@@ -1,3 +1,6 @@
+// ====
+// BetterHTMLMenu et navigation
+// ====
 [class^="betterhtmlmenu"] { display: none; }
 
 @media (max-width: 450px), (max-device-width: 450px) {
@@ -18,4 +21,15 @@
 
 #page-navigation ul:not([class~="align-right"]) {
     float: left;
+}
+
+// ====
+// Big Red Button
+// ====
+.big-red-button {
+    outline: 0 !important;
+    border-radius: 50%;
+    font-size: 40px;
+    height: 300px;
+    width: 300px;
 }
