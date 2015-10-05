@@ -26,7 +26,7 @@ Route::get('/item/{id}', ['as' => 'item', function($id) {
 }])->where('id', '[0-9]+');
 
 Route::group(['prefix' => 'sale', 'as' => 'sell::'], function() {
-    Route::get('/', ['as' => 'index', 'middleware' => 'auth', 'uses' => 'SaleController@index']);
+    Route::get('/', ['as' => 'index', 'middleware' => 'auth', 'uses' => 'SalesController@index']);
     Route::post('/add', ['as' => 'add', 'middleware' => 'auth', 'uses' => 'ItemsController@add']);
 });
 
