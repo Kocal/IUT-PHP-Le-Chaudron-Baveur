@@ -6,10 +6,10 @@ use DB;
 use App\Categories;
 use App\Http\Requests;
 
-class SaleController extends Controller {
+class SalesController extends Controller {
 
     /**
-     * Correspond à la route GET "/sale/"
+     * Correspond à la route GET "/sale"
      *
      * Retourne la View 'sell' en passant les Categories en paramètres
      * @return \Illuminate\Http\Response
@@ -22,6 +22,7 @@ class SaleController extends Controller {
             $categoriesForView[$category->slug] = $category->name;
         }
 
+        // Tri des clés par ordre alphabétique
         ksort($categoriesForView);
 
         return view('sell')->with('categories', $categoriesForView);
