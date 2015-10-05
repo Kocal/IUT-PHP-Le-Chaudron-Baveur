@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
 use Validator;
+use App\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 
@@ -40,7 +40,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Get a validator for an incoming registration request.
+     * Permet de valider les données envoyées par l'utilisateur pendant l'inscription
      *
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
@@ -48,30 +48,32 @@ class AuthController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'firstname' => 'required|max:255',
-            'lastname' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
-            'phone_number' => 'required',
-            'adress' => 'required',
-            'password' => 'required|confirmed|min:6',
+            'firstname'             => 'required|max:255',
+            'lastname'              => 'required|max:255',
+            'email'                 => 'required|email|max:255|unique:users',
+            'phone_number'          => 'required',
+            'adress'                => 'required',
+            'password'              => 'required|confirmed|min:6',
             'password_confirmation' => 'required'
         ]);
     }
 
     /**
-     * Create a new user instance after a valid registration.
+     * Permet de créer un nouvel User dans la base de données, après que la validation s'est bien passée
      *
      * @param  array  $data
      * @return User
      */
     protected function create(array $data)
     {
+        // Si l'utilisateura rentré un numéro de téléphone du genre "01.12-23.12.54"
         $data['phone_number'] = str_replace(['.', ' ', '-'], '', $data['phone_number']);
         $data['phone_number'] = preg_replace('/\+[0-9]{2}(.+)/', '0$1', $data['phone_number']);
 
-        // Premier utilisateur = admin
+        // Si on n'a pas encore d'utilisateurs, alors ce nouvel utilisateur est Admin, sinon il est Particulier
         $data['user_type_id'] = (User::first() === null) ? 1 : 2;
 
+        // Création de l'utilisateur dans la base de données
         return User::create([
             'firstname' => $data['firstname'],
             'lastname' => $data['lastname'],
@@ -95,21 +97,28 @@ class AuthController extends Controller
     }
 
     /**
+     * Affiche un message après une inscription réussie
+     *
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function postRegister(Request $request) {
+        // Validation des données du formulaire d'inscription
         $validator = $this->validator($request->all());
 
+        // Si il y a eu un problème, on lance une ValidationException.
+        // Retourne sur la page d'inscription, et affiche les différentes erreurs pour les différents champs
         if ($validator->fails()) {
             $this->throwValidationException(
                 $request, $validator
             );
         }
 
+        // Tout c'est bien passé, on créer l'utilisateur dans la base de données, et on le connecte au site
         Auth::login($this->create($request->all()));
-        $request->session()->flash('message', 'sucess|Inscription réussie');
+        $request->session()->flash('message', 'success|Inscription réussie');
 
+        // Redirection vers $this->redirectTo
         return redirect($this->redirectPath());
     }
 }
