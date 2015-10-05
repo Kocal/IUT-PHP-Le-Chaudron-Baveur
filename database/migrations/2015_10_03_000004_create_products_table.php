@@ -17,7 +17,7 @@ class CreateProductsTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->integer('category_id')->unsigned();
             $table->string('name', 200);
-            $table->text('description')
+            $table->text('description');
             $table->double('mimimum_price', 10, 2);
             $table->date('start_sale');
             $table->date('start_end');
