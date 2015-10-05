@@ -16,11 +16,15 @@ a {
 
 #page-header {
     background: $header-bg;
-    color: $header-color;
+
     text-shadow: 1px 1px darken($header-bg, 20%);
 
     a {
         text-decoration: none;
+
+        &, &:hover {
+            color: $header-color;
+        }
     }
 }
 

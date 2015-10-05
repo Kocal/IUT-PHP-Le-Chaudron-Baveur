@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
@@ -21,12 +23,16 @@ class AuthController extends Controller
     |
     */
 
-    use AuthenticatesAndRegistersUsers, ThrottlesLogins;
+    use AuthenticatesAndRegistersUsers;
+    use ThrottlesLogins;
+
+    /**
+     * @var string URL de redirection après authentification
+     */
+    private $redirectTo = '/';
 
     /**
      * Create a new authentication controller instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -42,9 +48,13 @@ class AuthController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required|max:255',
+            'firstname' => 'required|max:255',
+            'lastname' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
+            'phone_number' => 'required',
+            'adress' => 'required',
             'password' => 'required|confirmed|min:6',
+            'password_confirmation' => 'required'
         ]);
     }
 
@@ -56,10 +66,50 @@ class AuthController extends Controller
      */
     protected function create(array $data)
     {
+        $data['phone_number'] = str_replace(['.', ' ', '-'], '', $data['phone_number']);
+        $data['phone_number'] = preg_replace('/\+[0-9]{2}(.+)/', '0$1', $data['phone_number']);
+
+        // Premier utilisateur = admin
+        $data['user_type_id'] = (User::first() === null) ? 1 : 2;
+
         return User::create([
-            'name' => $data['name'],
+            'firstname' => $data['firstname'],
+            'lastname' => $data['lastname'],
             'email' => $data['email'],
-            'password' => bcrypt($data['password']),
+            'phone_number' => $data['phone_number'],
+            'user_type_id' => $data['user_type_id'],
+            'adress' => $data['adress'],
+            'password' => bcrypt($data['password'])
         ]);
+    }
+
+    /**
+     * Affiche un message après une connexion réussie
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function authenticated(Request $request) {
+        $request->session()->flash('message', 'success|Connexion réussie');
+        return redirect()->intended($this->redirectPath());
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function postRegister(Request $request) {
+        $validator = $this->validator($request->all());
+
+        if ($validator->fails()) {
+            $this->throwValidationException(
+                $request, $validator
+            );
+        }
+
+        Auth::login($this->create($request->all()));
+        $request->session()->flash('message', 'sucess|Inscription réussie');
+
+        return redirect($this->redirectPath());
     }
 }

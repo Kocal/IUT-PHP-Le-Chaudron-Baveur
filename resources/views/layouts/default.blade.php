@@ -1,3 +1,16 @@
+<?php
+use Illuminate\Support\Facades\Session;
+
+function displayAlert() {
+    if (Session::has('message')) {
+        list($type, $message) = explode('|', Session::get('message'));
+        return sprintf('<div class="alert alert-%s">%s</div>', $type, $message);
+    }
+
+    return '';
+}
+?>
+
 @if (trim($__env->yieldContent('title')))
     @section('title') | Le Chaudron Baveur @append
 @else
@@ -31,7 +44,11 @@
                     <ul class="align-right">
                         @section('nav-right')
                             @if(Auth::check())
-                                <li><a href="{{ route('logout') }}">Se déconnecter</a></li>
+                                @if(Auth::user()->user_type_id == 1)
+                                    <li><a href="{{ route('admin::index') }}">Administration</a></li>
+                                @endif
+                                <li><a href="{{ route('profile') }}">Mon profil</a></li>
+                                <li><a href="{{ route('logout') }}">Se déconnecter ({{Auth::user()->email }})</a></li>
                             @else
                                 <li><a href="{{ route('register') }}">S'inscrire</a></li>
                                 <li><a href="{{ route('login') }}">Se connecter</a></li>
@@ -45,7 +62,9 @@
     @show
 
     <div id="page-content">
-        <section class="container">@yield('content')</section>
+        <section class="container">
+            {!! displayAlert() !!}
+            @yield('content')</section>
     </div>
     <footer id="page-footer">
         <section class="container text-center">
