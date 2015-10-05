@@ -3,7 +3,6 @@
 @section('title', 'S\'inscrire')
 
 @section('content')
-
 <div class="row">
     <div class="col-md-7 container-fluid">
         <h2 class="text-center">S'inscrire</h2>

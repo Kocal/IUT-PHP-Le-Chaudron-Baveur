@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class CategoriesSeeder extends Seeder
 {
@@ -16,7 +15,7 @@ class CategoriesSeeder extends Seeder
 
         foreach ($datas as $name) {
             DB::table('categories')->insert([
-                'slug' => Str::slug($name),
+                'slug' => str_slug($name),
                 'name' => $name
             ]);
         }

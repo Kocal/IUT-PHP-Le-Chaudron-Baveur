@@ -37,8 +37,8 @@ function displayAlert() {
                 <section class="container">
                     <ul>
                         @section('nav-left')
-                        <li><a href="{{ route('products') }}">Acheter</a></li>
-                        <li><a href="{{ route('sell') }}">Vendre</a></li>
+                        <li><a href="{{ route('items') }}">Acheter</a></li>
+                        <li><a href="{{ route('sell::index') }}">Vendre</a></li>
                         @show
                     </ul>
                     <ul class="align-right">
