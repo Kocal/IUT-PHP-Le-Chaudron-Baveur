@@ -6023,9 +6023,11 @@ body {
   display: block;
   padding: 10px; }
 
-#page-logo,
-#page-content {
-  padding: 10px 0; }
+#page-logo > .container,
+#page-content > .container,
+#page-footer > .container {
+  padding-top: 20px;
+  padding-bottom: 20px; }
 
 [class^="betterhtmlmenu"] {
   display: none; }
