@@ -17,15 +17,20 @@ Route::get('/', ['as' => 'index', function() {
     return view('index');
 }]);
 
-Route::get('/products', ['as' => 'products', function() {
-    return view('products');
+Route::get('/items', ['as' => 'items', function() {
+    return view('items');
 }]);
 
-Route::get('/sell', ['as' => 'sell', 'middleware' => ['auth'], function() {
-    return view('sell');
-}]);
+Route::get('/item/{id}', ['as' => 'item', function($id) {
+    return 'hey' . $id;
+}])->where('id', '[0-9]+');
 
-Route::get('/profile', ['as' => 'profile', 'middleware' => ['auth'], function() {
+Route::group(['prefix' => 'sale', 'as' => 'sell::'], function() {
+    Route::get('/', ['as' => 'index', 'middleware' => 'auth', 'uses' => 'SaleController@index']);
+    Route::post('/add', ['as' => 'add', 'middleware' => 'auth', 'uses' => 'ItemsController@add']);
+});
+
+Route::get('/profile', ['as' => 'profile', 'middleware' => 'auth', function() {
     return view('profile');
 }]);
 
