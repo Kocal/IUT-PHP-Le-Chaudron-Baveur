@@ -146,9 +146,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
-        AdamWathan\BootForms\BootFormsServiceProvider::class
-
-
+        AdamWathan\BootForms\BootFormsServiceProvider::class,
+        Overtrue\LaravelLang\TranslationServiceProvider::class
     ],
 
     /*

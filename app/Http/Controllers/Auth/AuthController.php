@@ -48,11 +48,11 @@ class AuthController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'firstname'             => 'required|max:255',
-            'lastname'              => 'required|max:255',
+            'first_name'            => 'required|max:255',
+            'last_name'             => 'required|max:255',
             'email'                 => 'required|email|max:255|unique:users',
-            'phone_number'          => 'required',
-            'adress'                => 'required',
+            'phone'                 => 'required',
+            'address'               => 'required',
             'password'              => 'required|confirmed|min:6',
             'password_confirmation' => 'required'
         ]);
@@ -67,20 +67,20 @@ class AuthController extends Controller
     protected function create(array $data)
     {
         // Si l'utilisateura rentré un numéro de téléphone du genre "01.12-23.12.54"
-        $data['phone_number'] = str_replace(['.', ' ', '-'], '', $data['phone_number']);
-        $data['phone_number'] = preg_replace('/\+[0-9]{2}(.+)/', '0$1', $data['phone_number']);
+        $data['phone'] = str_replace(['.', ' ', '-'], '', $data['phone']);
+        $data['phone'] = preg_replace('/\+[0-9]{2}(.+)/', '0$1', $data['phone']);
 
         // Si on n'a pas encore d'utilisateurs, alors ce nouvel utilisateur est Admin, sinon il est Particulier
         $data['user_type_id'] = (User::first() === null) ? 1 : 2;
 
         // Création de l'utilisateur dans la base de données
         return User::create([
-            'firstname' => $data['firstname'],
-            'lastname' => $data['lastname'],
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
             'email' => $data['email'],
-            'phone_number' => $data['phone_number'],
+            'phone' => $data['phone'],
             'user_type_id' => $data['user_type_id'],
-            'adress' => $data['adress'],
+            'address' => $data['address'],
             'password' => bcrypt($data['password'])
         ]);
     }

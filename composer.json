@@ -12,7 +12,9 @@
         "adamwathan/bootforms": "^0.7.0",
         "barryvdh/laravel-debugbar": "^2.0",
         "barryvdh/laravel-ide-helper": "^2.1",
-        "intervention/image": "^2.3"
+        "intervention/image": "^2.3",
+        "caouecs/laravel4-lang": "~2.0",
+        "overtrue/laravel-lang": "1.0.*"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

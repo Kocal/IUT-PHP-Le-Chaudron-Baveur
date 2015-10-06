@@ -9,12 +9,12 @@
         {!! BootForm::open() !!}
             <div class="row">
                 <div class="col-md-6">
-                    {!! BootForm::text('Prénom', 'firstname')
-                ->placeholder('ex: John')->defaultValue(old('firstname')) !!}
+                    {!! BootForm::text('Prénom', 'first_name')
+                ->placeholder('ex: John')->defaultValue(old('first_name')) !!}
                 </div>
                 <div class="col-md-6">
-                    {!! BootForm::text('Nom', 'lastname')
-                ->placeholder('ex: Smith')->defaultValue(old('lastname')) !!}
+                    {!! BootForm::text('Nom', 'last_name')
+                ->placeholder('ex: Smith')->defaultValue(old('last_name')) !!}
                 </div>
             </div>
             <div class="row">
@@ -23,14 +23,14 @@
                 ->placeholder('ex: john.smith@mail.com')->defaultValue(old('email')) !!}
                 </div>
                 <div class="col-md-6">
-                    {!! BootForm::text('Numéro de téléphone', 'phone_number')
-                ->placeholder('ex: 01 23 45 67 89')->defaultValue(old('phone_number')) !!}
+                    {!! BootForm::text('Numéro de téléphone', 'phone')
+                ->placeholder('ex: 01 23 45 67 89')->defaultValue(old('phone')) !!}
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-12">
-                    {!! BootForm::textarea('Adresse postale', 'adress')->defaultValue(old('adress'))->rows(4) !!}
+                    {!! BootForm::textarea('Adresse postale', 'address')->defaultValue(old('address'))->rows(4) !!}
                 </div>
             </div>
 
