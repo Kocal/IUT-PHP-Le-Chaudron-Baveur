@@ -26,13 +26,14 @@
                     Un jour, faudra forker BootForm pour qu'il fonctionne avec les Addons de Bootstrap ^^=)
                     http://getbootstrap.com/css/#forms-inline
                 -->
-                <div class="form-group">
+                <div class="form-group {!! $errors->has('price') ? 'has-error' : '' !!}">
                     <label class="control-label" for="price">Prix minimum</label>
                     <div class="input-group">
                         <input type="number" name="price" id="price" class="form-control" value="<?= old('price') ?>"
                                placeholder="ex: 42,42" step="0.01" min="0">
                         <div class="input-group-addon">€</div>
                     </div>
+                    {!! $errors->first('price', '<p class="help-block">:message</p>') !!}
                 </div>
             </div>
 
