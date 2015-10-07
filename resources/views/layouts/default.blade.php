@@ -14,7 +14,7 @@ function displayAlert() {
 @if (trim($__env->yieldContent('title')))
     @section('title') | Le Chaudron Baveur @append
 @else
-    @section('title', 'Le Chaudron Baveur');
+    @section('title', 'Le Chaudron Baveur')
 @endif
 <!doctype html>
 <html lang="fr">
