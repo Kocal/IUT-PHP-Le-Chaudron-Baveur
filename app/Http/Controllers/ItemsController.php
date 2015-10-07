@@ -12,6 +12,23 @@ use DB;
 use Intervention\Image\ImageManager;
 
 class ItemsController extends Controller {
+
+    public function index(Request $request) {
+        // Pagination de 2 articles par page (c'est pour les tests !)
+        $items = Items::paginate(2);
+        return view('items') ->with('items', $items);
+    }
+
+    public function see(Request $request, $id) {
+        $item = Items::where('id', $id)->first();
+
+        if($item === null) {
+            $request->session()->flash('message', 'danger|Cette vente n\'existe pas.');
+            return redirect(route('items'));
+        }
+
+        return view('item')->with('item', $item);
+    }
     /**
      * Permet d'ajouter un Item dans la base de données
      * @param Request $request
@@ -26,7 +43,7 @@ class ItemsController extends Controller {
             'name' => 'required|max:200',
             'category' => 'required|in:' . implode(',', Categories::getSlugs()),
             'photo' => 'required|image',
-            'price' => 'required|numeric',
+            'price' => 'required|numeric|min:0',
             'date_start' => 'required|date',
             'date_end' => 'required|date|after:date_start',
             'description' => 'required',
@@ -78,8 +95,8 @@ class ItemsController extends Controller {
 
         // Active l'entrelacement sur la photo envoyée par l'utilisateur et réduit la qualité
         $manager->make($filename . '.' . $file->getClientOriginalExtension())
-            ->interlace(true)
-            ->save($filename . '.jpg', 80);
+                ->interlace(true)
+                ->save($filename . '.jpg', 80);
 
         // Si par exemple l'utilisateur a envoyé un .png (ou un .Jpg), alors on supprime l'image,
         // puisqu'on a déjà sauvegardé une version en .jpg
