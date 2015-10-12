@@ -22,6 +22,7 @@ use Illuminate\Support\Str;
 @append
 
 @section('content')
+    <h2 class="text-center page-title">Enchères en cours</h2>
     <div class="row masonry-container" >
         @foreach($items as $item)
             <?php
@@ -30,9 +31,13 @@ use Illuminate\Support\Str;
             ?>
             <div class="col-md-4 col-sm-6 item">
                 <div class="item--thumbnail thumbnail">
-                    <img src="{{ asset(preg_replace('/\.jpg$/', '_thumb.jpg', $item->photo)) }}" alt="">
+                    <a href="{{route('item', ['id' => $item->id])}}">
+                        <img src="{{ asset(preg_replace('/\.jpg$/', '_thumb.jpg', $item->photo)) }}" title="{{ $item->name }}" alt="Photo vente : {{ $item->name }}">
+                    </a>
                     <div class="caption">
-                        <h4 class="item--name"><a href="{{route('item', ['id' => $item->id])}}">{{ Str::words($item->name, 10) }}</a></h4>
+                        <h4 class="item--name">
+                            <a href="{{ route('item', ['id' => $item->id]) }}" title="{{ $item->name }}">{{ Str::words($item->name, 10) }}</a>
+                        </h4>
                         <p class="item--description">{!! Str::words(nl2br(htmlspecialchars($item->description)), 30) !!}</p>
                         <hr>
                             <p>Prix de vente : <b>{{ $item->price }} €</b><br>
