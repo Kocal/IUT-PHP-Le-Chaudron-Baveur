@@ -14,8 +14,7 @@ use Intervention\Image\ImageManager;
 class ItemsController extends Controller {
 
     public function index(Request $request) {
-        // Pagination de 2 articles par page (c'est pour les tests !)
-        $items = Items::paginate(8);
+        $items = Items::paginate(9);
         return view('items') ->with('items', $items);
     }
 
