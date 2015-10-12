@@ -15,7 +15,7 @@ class ItemsController extends Controller {
 
     public function index(Request $request) {
         // Pagination de 2 articles par page (c'est pour les tests !)
-        $items = Items::paginate(2);
+        $items = Items::paginate(8);
         return view('items') ->with('items', $items);
     }
 
@@ -76,9 +76,9 @@ class ItemsController extends Controller {
         $item = new Items();
         $item->user_id = Auth::user()->id;
         $item->category_id = Categories::where('slug', $datas['category'])->value('id');
-        $item->name = $datas['name'];
-        $item->description = $datas['description'];
-        $item->minimum_price = $datas['price'];
+        $item->name = trim($datas['name']);
+        $item->description = trim($datas['description']);
+        $item->price = $datas['price'];
         $item->date_start = $datas['date_start'];
         $item->date_end = $datas['date_end'];
 
@@ -90,6 +90,11 @@ class ItemsController extends Controller {
         // Sauvegarde de la photo
         $file->move(public_path('upload'), $filename . '.' . $file->getClientOriginalExtension());
 
+        // On sauvegarde un lien relatif pour le lien de la photo, pour éviter un bordel monstre lors d'un
+        // changement de nom de domaine.
+        $item->photo = 'upload/' . $filename . '.jpg';
+
+        // Là on peut utiliser le chemin absolu de l'image (/home/..../image.jpg)
         $filename = public_path('upload') . '/' . $filename;
         $filename_thumb = public_path('upload') . '/' . $filename_thumb;
 
@@ -106,7 +111,7 @@ class ItemsController extends Controller {
 
         // Création de la miniature, de taille 400px * ratio px.
         $manager->make($filename . '.jpg')
-                ->resize(400, null, function($constraint) {
+                ->resize(300, null, function($constraint) {
                     $constraint->aspectRatio();
                 })
                 ->interlace(true)
