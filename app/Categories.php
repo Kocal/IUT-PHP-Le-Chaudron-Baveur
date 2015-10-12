@@ -21,4 +21,19 @@ class Categories extends Model
 
         return $slugsToReturn;
     }
+
+    /**
+     * Permet de récupérer le nom d'une catégorie via son identifiant
+     * @param int $id Identifiant de catégorie
+     * @return string|null Nom de la catégorie ou rien
+     */
+    public static function getNameById($id) {
+        $category = Categories::get(['id', 'name'])->where('id', $id)->first();
+
+        if($category !== null) {
+            return $category->name;
+        }
+
+        return null;
+    }
 }

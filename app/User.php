@@ -36,4 +36,19 @@ class User extends Model implements AuthenticatableContract,
      * @var array
      */
     protected $hidden = ['password', 'remember_token'];
+
+    /**
+     * Permet de récupérer l'e-mail d'un utilisateur via son identifiant
+     * @param int $id Identifiant de l'utilisateur
+     * @return string|null Adresse e-mail ou rien
+     */
+    public static function getEmailById($id) {
+        $user = User::get(['id', 'email'])->where('id', $id)->first();
+
+        if($user !== null) {
+            return $user->email;
+        }
+
+        return null;
+    }
 }
