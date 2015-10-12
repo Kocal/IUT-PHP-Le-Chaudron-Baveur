@@ -72,9 +72,9 @@ function displayAlert() {
         </section>
     </footer>
 
-    @section('js')
     <script src="{{ asset('js/better-html-menu.js') }}"></script>
     <script>BetterHTMLMenu('nav')</script>
+    @section('js')
     @show
 </body>
 </html>

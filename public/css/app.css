@@ -6053,6 +6053,15 @@ body {
   width: 300px;
   white-space: normal; }
 
+.item--description {
+  font-size: 13px; }
+
+.item--price-separator-down {
+  margin-bottom: 13px; }
+
+.item--thumbnail {
+  padding-top: 15px; }
+
 .align-left {
   float: left; }
 
