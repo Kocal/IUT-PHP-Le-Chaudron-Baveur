@@ -4,17 +4,29 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Bids extends Model
-{
-    //
+class Bids extends Model {
 
-    public static function getBidPriceOrProductPrice($id) {
-        $bid = Bids::get(['price'])->where('product_id', $id)->last();
+    // Champs à remplir dans la bdd
+    protected $fillable = ['user_id', 'product_id', 'price'];
+
+    /**
+     * Récupère le prix de la dernière enchère, s'il n'y a pas eu d'enchère, récupère alors le prix de mise en vente
+     * @param int $id Identifiant de la vente
+     * @return float mixed
+     */
+    public static function getLastBidPriceOrProductPrice($id) {
+        $bid = Bids::get(['item_id', 'price'])->where('item_id', $id)->last();
 
         if($bid !== null) {
             return $bid->price;
         }
 
-        return Items::get(['id', 'price'])->where('id', $id)->last()->price;
+        $item = Items::get(['id', 'price'])->where('id', $id)->last();
+
+        if($item !== null) {
+            return $item->price;
+        }
+
+        return null;
     }
 }
