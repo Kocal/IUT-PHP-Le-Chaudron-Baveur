@@ -21,6 +21,7 @@ Route::get('/', ['as' => 'index', function() {
 
 // Affiche les enchères
 Route::get('items', ['as' => 'items', 'uses' => 'ItemsController@index']);
+Route::get('items/sort/by/{type}/{sort}', ['as' => 'items_sort', 'uses' => 'ItemsController@index']);
 
 // Affiche l'enchère n°$id
 Route::get('item/{id}', ['as' => 'item', 'uses' => 'ItemsController@see'])->where('id', '[0-9]+');
@@ -34,6 +35,11 @@ Route::group(['prefix' => 'sale', 'as' => 'sell::'], function() {
     // Ajout d'une nouvelle vente dans la bdd
     Route::post('add', ['as' => 'add', 'middleware' => 'auth', 'uses' => 'ItemsController@add']);
 });
+
+// Permet de rediriger un utilisateur vers une page (genre sur la page des ventes avec les différentes options de tri)
+Route::get('redirect_to', ['as' => 'redirect_to', function() {
+    return redirect(Input::get('url', url('/')));
+}]);
 
 // ça on verra un autre jour
 Route::get('profile', ['as' => 'profile', 'middleware' => 'auth', function() {
