@@ -2,24 +2,56 @@
 
 namespace App\Http\Controllers;
 
+use DB;
 use App\Items;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Categories;
 use Illuminate\Support\Facades\Auth;
-use DB;
 use Intervention\Image\ImageManager;
 
 class ItemsController extends Controller {
 
     public function index(Request $request) {
-        $items = Items::paginate(9);
-        return view('items') ->with('items', $items);
+        
+        $items = Items
+            ::where('date_start', '<',  date('Y-m-d'))
+            ->where('date_end', '>',  date('Y-m-d'))
+            ->paginate(9);
+
+        $sortOptionsDefinitions = [
+            route('items_sort', ['type' => 'date_start', 'sort' => 'desc']) => 'Nouvelles ventes',
+            route('items_sort', ['type' => 'duration', 'sort' => 'asc']) => 'Durée (ventes se terminant)',
+
+            route('items_sort', ['type' => 'price_open', 'sort' => 'asc']) => 'Prix d\'entrée (les moins chers)',
+            route('items_sort', ['type' => 'price_open', 'sort' => 'desc']) => 'Prix d\'entrée (les plus chers)',
+
+            route('items_sort', ['type' => 'price_last_bid', 'sort' => 'asc']) => 'Prix de dernière enchère (les moins chers)',
+            route('items_sort', ['type' => 'price_last_bid', 'sort' => 'desc']) => 'Prix de dernière enchère (les plus chers)',
+
+            route('items_sort', ['type' => 'categories', 'sort' => 'asc']) => 'Catégories (A à Z)',
+            route('items_sort', ['type' => 'categories', 'sort' => 'desc']) => 'Catégories (Z à A)',
+        ];
+
+        return view('items')
+            ->with('items', $items)
+            ->with('sortOptionsDefinitions', $sortOptionsDefinitions);
     }
 
     public function see(Request $request, $id) {
-        $item = Items::where('id', $id)->first();
+        $item = Items
+            ::select([
+            'id', 'user_id', 'category_id',
+            'name', 'description', 'photo', 'price',
+            'date_start', 'date_end'])
+            ->where('id', $id)
+            ->where(function($query) {
+                return $query
+                    ->where('date_start', '<',  date('Y-m-d'))
+                    ->where('date_end', '>',  date('Y-m-d'));
+            })
+            ->first();
 
         if($item === null) {
             $request->session()->flash('message', 'danger|Cette vente n\'existe pas.');
