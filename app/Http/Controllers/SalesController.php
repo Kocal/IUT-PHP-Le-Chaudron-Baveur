@@ -9,12 +9,10 @@ use App\Http\Requests;
 class SalesController extends Controller {
 
     /**
-     * Correspond à la route GET "/sale"
-     *
      * Retourne la View 'sell' en passant les Categories en paramètres
      * @return \Illuminate\Http\Response
      */
-    public function index(){
+    public function index() {
         $categories = Categories::all();
         $categoriesForView = [];
 
