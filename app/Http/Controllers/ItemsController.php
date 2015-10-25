@@ -11,15 +11,24 @@ use App\Categories;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\ImageManager;
 
+setlocale(LC_ALL, 'fr_FR.UTF-8');
+
 class ItemsController extends Controller {
 
+    /**
+     * Retourne un tableau des enchères en cours
+     *
+     * @param Request $request
+     * @return $this
+     */
     public function index(Request $request) {
-        
+        // Pagination de 30 enchères par page
         $items = Items
-            ::where('date_start', '<',  date('Y-m-d'))
+            ::where('date_start', '<=',  date('Y-m-d'))
             ->where('date_end', '>',  date('Y-m-d'))
-            ->paginate(9);
+            ->paginate(30);
 
+        // Les différentes options pour le tri des enchères (ça sera sûrement modifié bientôt)
         $sortOptionsDefinitions = [
             route('items_sort', ['type' => 'date_start', 'sort' => 'desc']) => 'Nouvelles ventes',
             route('items_sort', ['type' => 'duration', 'sort' => 'asc']) => 'Durée (ventes se terminant)',
@@ -39,68 +48,99 @@ class ItemsController extends Controller {
             ->with('sortOptionsDefinitions', $sortOptionsDefinitions);
     }
 
-    public function see(Request $request, $id) {
+    /**
+     * Retourne de plus amples informations sur un objet mis en vente
+     *
+     * @param Request $request
+     * @param int $item_id Identifiant de l'item
+     * @return $this|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function see(Request $request, $item_id) {
         $item = Items
             ::select([
-            'id', 'user_id', 'category_id',
-            'name', 'description', 'photo', 'price',
-            'date_start', 'date_end'])
-            ->where('id', $id)
-            ->where(function($query) {
-                return $query
-                    ->where('date_start', '<',  date('Y-m-d'))
-                    ->where('date_end', '>',  date('Y-m-d'));
-            })
+                'id', 'user_id', 'category_id',
+                'name', 'description', 'photo', 'price',
+                'date_start', 'date_end'])
+            ->where('id', $item_id)
             ->first();
 
-        if($item === null) {
+        $isSeller = $item->isSeller();
+        $starting = false; // La vente n'a pas encore débutée
+        $started = false; // La vente est en cours
+        $finished = false; // La vente est terminé
+
+        // Une vente qui n'a pas démarrée ou qui est terminée n'est accessible par personne, sauf par le propriétaire de la vente
+        if($item !== null) {
+            // La vente démarrera bientôt
+            if(strtotime($item->date_start) - time() > 0) {
+                if($isSeller) {
+                    $starting = true;
+                    $request->session()->flash('message', 'info|La vente débutera le ' . strftime('%A %d %B %Y', strtotime($item->date_start)) . '.');
+                }
+            // La vente est terminée
+            } elseif(strtotime($item->date_end) - time() < 0) {
+                if($isSeller) {
+                    $finished = true;
+                    $request->session()->flash('message', 'info|La vente s\'est terminée le ' . strftime('%A %d %B %Y', strtotime($item->date_end)) . '.');
+                }
+            // La vente est en cours
+            } else {
+                $started = true;
+            }
+        }
+
+        // Voir le tableau des accès selon les différents critères dans le cahier des charges
+        if(!$isSeller && $starting) {
             $request->session()->flash('message', 'danger|Cette vente n\'existe pas.');
             return redirect(route('items'));
         }
 
-        return view('item')->with('item', $item);
+        return view('item')->with([
+            'item' => $item,
+            'starting' => $starting,
+            'started' => $started,
+            'finished' => $finished
+        ]);
     }
+
     /**
-     * Permet d'ajouter un Item dans la base de données
+     * Prépare l'insertion d'un item dans la BDD
+     *
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function add(Request $request) {
-        /*
-         * Validation des champs sous la forme :
-         *  Nom du champ => règles de validation
-         */
+        $item_id = null;
+
         $this->validate($request, [
             'name' => 'required|max:200',
             'category' => 'required|in:' . implode(',', Categories::getSlugs()),
             'photo' => 'required|image',
             'price' => 'required|numeric|min:0',
-            'date_start' => 'required|date',
+            'date_start' => 'required|date|after:' . date('Y-m-d'),
             'date_end' => 'required|date|after:date_start',
             'description' => 'required',
         ]);
 
         // S'il y a eu un problème quelconque pendant la création de l'Item
-        if(!($id = $this->create($request))) {
+        if(!($item_id = $this->create($request))) {
             $request->session()->flash('message', 'danger|Une erreur s\'est produite');
             return redirect('sell::index');
         }
 
         // Tout s'est bien passé, on redirige ensuite sur la page de l'annonce
         $request->session()->flash('message', 'success|Votre annonce à bien été mise en ligne !');
-        return redirect(route('item', ['id' => $id]));
+        return redirect(route('item', ['id' => $item_id]));
     }
 
     /**
-     * Permet de créer un Item dans la base de données.
-     * Compresse l'image envoyée par l'utilisateur, et crée aussi une miniature
+     * Insère un nouvel item dans la BDD
+     *
      * @param Request $request
      * @return bool|mixed
      */
     public function create(Request $request) {
-        // Récupération des données envoyées par l'utilisateurs
         $datas = $request->all();
-        // Création de l'ImageManager, classe qui permet de manipuler les images
         $manager = new ImageManager(['driver' => 'imagick']);
 
         // Création de l'Item
@@ -115,7 +155,7 @@ class ItemsController extends Controller {
 
         // Récupération de la photo envoyée par l'utilisateur
         $file = $request->file('photo');
-        $filename = str_limit($file->getClientOriginalName(), 40) . str_random();
+        $filename = str_limit(str_replace(['/', '\\'], '', $file->getClientOriginalName()), 30) . str_random();
         $filename_thumb = $filename . '_thumb';
 
         // Sauvegarde de la photo
@@ -134,13 +174,13 @@ class ItemsController extends Controller {
                 ->interlace(true)
                 ->save($filename . '.jpg', 80);
 
-        // Si par exemple l'utilisateur a envoyé un .png (ou un .Jpg), alors on supprime l'image,
+        // Si par exemple l'utilisateur a envoyé un .png (ou un .JpG), alors on supprime l'image,
         // puisqu'on a déjà sauvegardé une version en .jpg
         if($file->getClientOriginalExtension() !== 'jpg') {
             unlink($filename . '.' . $file->getClientOriginalExtension());
         }
 
-        // Création de la miniature, de taille 400px * ratio px.
+        // Création de la miniature, de taille 300px * ratio px.
         $manager->make($filename . '.jpg')
                 ->resize(300, null, function($constraint) {
                     $constraint->aspectRatio();
@@ -153,7 +193,7 @@ class ItemsController extends Controller {
             return $item->id;
         }
 
-        // Sinon il y a eu un problème. :<
+        // Sinon il y a eu un problème. :< :< :<
         return false;
     }
 }
