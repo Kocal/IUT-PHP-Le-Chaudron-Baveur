@@ -121,4 +121,10 @@ class AuthController extends Controller
         // Redirection vers $this->redirectTo
         return redirect($this->redirectPath());
     }
+
+    public function getLogout(Request $request) {
+        Auth::logout();
+        $request->session()->flash('message', 'success|Vous vous êtes bien déconnecté !');
+        return redirect(property_exists($this, 'redirectAfterLogout') ? $this->redirectAfterLogout : '/');
+    }
 }
