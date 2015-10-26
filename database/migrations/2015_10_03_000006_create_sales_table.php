@@ -15,11 +15,7 @@ class CreateSalesTable extends Migration
         Schema::create('sales', function(Blueprint $table) {
             $table->increments('id');
             $table->integer('bid_id')->unsigned();
-
-        });
-
-        Schema::table('sales', function (Blueprint $table) {
-            //$table->foreign('bid_id')->references('id')->on('bids');
+            $table->timestamps();
         });
     }
 
