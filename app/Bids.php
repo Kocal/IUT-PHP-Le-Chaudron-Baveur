@@ -12,7 +12,7 @@ class Bids extends Model {
     /**
      * Récupère le prix de la dernière enchère, s'il n'y a pas eu d'enchère, récupère alors le prix de mise en vente
      * @param int $id Identifiant de la vente
-     * @return float mixed
+     * @return float mixed Montant
      */
     public static function getLastBidPriceOrProductPrice($id) {
         $bid = Bids::get(['item_id', 'price'])->where('item_id', $id)->last();
