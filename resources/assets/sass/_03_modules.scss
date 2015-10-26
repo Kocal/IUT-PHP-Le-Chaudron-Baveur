@@ -38,14 +38,51 @@
 // ====
 // Items
 // ====
-.item--description {
-    font-size: 13px;
+
+.items-table {
+    thead {
+        font-size: 15px;
+
+        th {
+            text-align: center;
+        }
+    }
+
+    tbody {
+        font-size: 14px;
+    }
+
+    td {
+        vertical-align: middle !important;
+    }
+}
+
+.item {
+    display: inline-block;
+    margin-bottom: 15px;
+    padding: .25rem;
+    width: 100%;
+}
+
+.item--well {
+    position:relative;
+    display: block;
+    text-align: center;
+    padding: 0;
+}
+
+.item--thumbnail {
+    display: inline-block;
+}
+
+.item--thumbnail + .caption {
+    padding: 0 5px 5px;
+    text-align: left;
 }
 
 .item--price-separator-down {
     margin-bottom: 13px;
 }
 
-.item--thumbnail {
-    padding-top: 15px;
-}
+// Pour réduire la width des formulaires pour enchérir sur la liste des ventes
+
