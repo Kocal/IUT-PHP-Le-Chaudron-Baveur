@@ -8,12 +8,12 @@
     <div class="col-md-3">
         <h2 class="text-center">Se connecter</h2>
         {!! BootForm::open() !!}
-        {!! BootForm::email('Adresse e-mail', 'email')->placeholder('ex: john.smith@mail.com')->defaultValue(old('email')) !!}
-        {!! BootForm::password('Mot de passe', 'password')->placeholder('qsdqsd') !!}
-        {!! BootForm::checkbox('Garder ma session ouverte', 'remember') !!}
-        <div class="text-center">
-        {!! BootForm::submit('Se connecter', 'btn btn-primary btn-lg') !!}
-        </div>
+            {!! BootForm::email('Adresse e-mail', 'email')->placeholder('ex: john.smith@mail.com')->defaultValue(old('email')) !!}
+            {!! BootForm::password('Mot de passe', 'password') !!}
+            {!! BootForm::checkbox('Garder ma session ouverte', 'remember') !!}
+            <div class="text-center">
+                {!! BootForm::submit('Se connecter', 'btn btn-primary btn-lg') !!}
+            </div>
         {!! BootForm::close() !!}
     </div>
     <div class="col-md-1"></div>
