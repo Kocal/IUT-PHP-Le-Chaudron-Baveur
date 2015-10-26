@@ -39,7 +39,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Europe/Paris',
 
     /*
     |--------------------------------------------------------------------------
@@ -147,7 +147,9 @@ return [
         App\Providers\RouteServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
         AdamWathan\BootForms\BootFormsServiceProvider::class,
-        Overtrue\LaravelLang\TranslationServiceProvider::class
+        Overtrue\LaravelLang\TranslationServiceProvider::class,
+        Barryvdh\Debugbar\ServiceProvider::class,
+
     ],
 
     /*
@@ -199,6 +201,7 @@ return [
 
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
-        'BootForm' => AdamWathan\BootForms\Facades\BootForm::class
+        'BootForm' => AdamWathan\BootForms\Facades\BootForm::class,
+        'Debugbar' => Barryvdh\Debugbar\Facade::class,
     ],
 ];
