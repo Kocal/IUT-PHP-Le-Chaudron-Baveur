@@ -24,7 +24,6 @@ setlocale(LC_ALL, 'fr_FR.UTF-8');
 
     $min_bid = $price + 1;
     $form_id = 'form_' . $item->id;
-
     ?>
     <div class="row">
         <div class="col-md-4">
