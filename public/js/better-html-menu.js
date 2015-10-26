@@ -1,9 +1,11 @@
-BetterHTMLMenu = function(selector) {
+'use strict';
+
+var BetterHTMLMenu = function(selector) {
     var menus = document.querySelectorAll(selector);
 
     BetterHTMLMenu.drawDropDownMenus(menus);
     BetterHTMLMenu.setCurrentAttribute();
-}
+};
 
 BetterHTMLMenu.drawDropDownMenus = function(menus) {
     var links = BetterHTMLMenu.getLinks(menus);
@@ -33,7 +35,7 @@ BetterHTMLMenu.drawDropDownMenus = function(menus) {
         nav.appendChild(select);
         menu.parentNode.insertBefore(nav, menu);
     }
-}
+};
 
 BetterHTMLMenu.getLinks = function(menus) {
     var links = {};
@@ -50,7 +52,7 @@ BetterHTMLMenu.getLinks = function(menus) {
     }
 
     return links;
-}
+};
 
 BetterHTMLMenu.setCurrentAttribute = function() {
     var options = document.querySelectorAll('[class^="betterhtmlmenu"] option');
@@ -59,10 +61,10 @@ BetterHTMLMenu.setCurrentAttribute = function() {
         var href = options[i].getAttribute('data-href');
         var page = location.href.split('/').pop().replace(/\#.*/, '');
 
-        if(href == location.hash
-        || href == page
-        || !!href.match(new RegExp(page + '$'))) {
+        if(href == location.hash || 
+            href == page || 
+            !!href.match(new RegExp(page + '$'))) {
             options[i].setAttribute('selected', '');
         }
     }
-}
+};
