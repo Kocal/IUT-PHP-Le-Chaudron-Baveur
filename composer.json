@@ -23,6 +23,9 @@
         "phpspec/phpspec": "~2.1"
     },
     "autoload": {
+        "files": [
+            "app/Http/Helpers.php"
+        ],
         "classmap": [
             "database"
         ],
