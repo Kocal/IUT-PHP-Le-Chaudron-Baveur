@@ -6,7 +6,6 @@ use DB;
 use App\Items;
 use Illuminate\Http\Request;
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
 use App\Categories;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\ImageManager;
@@ -16,20 +15,12 @@ setlocale(LC_ALL, 'fr_FR.UTF-8');
 class ItemsController extends Controller {
 
     /**
-     * Retourne un tableau des enchères en cours
-     *
-     * @param Request $request
-     * @return $this
+     * @var array Contient les différentes façons de trier la liste des items sur la page des ventes
      */
-    public function index(Request $request) {
-        // Pagination de 30 enchères par page
-        $items = Items
-            ::where('date_start', '<=',  date('Y-m-d'))
-            ->where('date_end', '>',  date('Y-m-d'))
-            ->paginate(30);
+    public $sortOptionsDefinitions;
 
-        // Les différentes options pour le tri des enchères (ça sera sûrement modifié bientôt)
-        $sortOptionsDefinitions = [
+    public function __construct() {
+        $this->sortOptionsDefinitions = [
             route('items_sort', ['type' => 'date_start', 'sort' => 'desc']) => 'Nouvelles ventes',
             route('items_sort', ['type' => 'duration', 'sort' => 'asc']) => 'Durée (ventes se terminant)',
 
@@ -42,10 +33,49 @@ class ItemsController extends Controller {
             route('items_sort', ['type' => 'categories', 'sort' => 'asc']) => 'Catégories (A à Z)',
             route('items_sort', ['type' => 'categories', 'sort' => 'desc']) => 'Catégories (Z à A)',
         ];
+    }
+
+    /**
+     * Retourne un tableau des enchères en cours
+     *
+     * @param Request $request
+     * @return $this
+     */
+    public function index(Request $request) {
+        // Pagination de 30 enchères par page
+        $items = Items
+            ::where('date_start', '<=',  date('Y-m-d'))
+            ->where('date_end', '>',  date('Y-m-d'))
+            ->with('category', 'user', 'bids')
+            ->paginate(30);
+
+        foreach($items as $item) {
+            $bids = $item->bids();
+
+            // On récupère soit le montant de la dernière enchère, soit le montant initial de l'annonce
+            $item->lastBidPrice = $item->getPrice();
+
+            // Détermine si l'utilisateur connecté est le vendeur de l'annonce
+            $item->userIsSeller = $item->isSeller();
+
+            // Compte le nombre de propositions de l'utilisateur sur l'enchère
+            $item->userBidsCount = $item->getUserBidsCount();
+
+            // L'utilisateur sera incapable de renchérir s'il a dépassé le montant maximum d'essais par vente
+            $item->userCantBid = Auth::Check() && $item->userBidsCount >= MAX_BID_PER_SALE;
+
+            // Prix minimum de la prochaine renchère (rajouter 0,01 € serait abusé...)
+            $item->minBidPrice = $item->lastBidPrice + 1;
+
+            // Identifiant du formulaire, utile pour mettre en évidence le formulaire où une erreur s'est produite
+            $item->formId = 'form_' . $item->id;
+
+            $item->dateDifference = $item->getDateDiff();
+        }
 
         return view('items')
             ->with('items', $items)
-            ->with('sortOptionsDefinitions', $sortOptionsDefinitions);
+            ->with('sortOptionsDefinitions', $this->sortOptionsDefinitions);
     }
 
     /**
@@ -79,10 +109,8 @@ class ItemsController extends Controller {
                 }
             // La vente est terminée
             } elseif(strtotime($item->date_end) - time() < 0) {
-                if($isSeller) {
-                    $finished = true;
-                    $request->session()->flash('message', 'info|La vente s\'est terminée le ' . strftime('%A %d %B %Y', strtotime($item->date_end)) . '.');
-                }
+                $finished = true;
+                $request->session()->flash('message', 'info|La vente s\'est terminée le ' . strftime('%A %d %B %Y', strtotime($item->date_end)) . '.');
             // La vente est en cours
             } else {
                 $started = true;
@@ -94,6 +122,10 @@ class ItemsController extends Controller {
             $request->session()->flash('message', 'danger|Cette vente n\'existe pas.');
             return redirect(route('items'));
         }
+
+        $item->form_id = 'form_' . $item->id;
+        $item->lastBidPrice = $item->getPrice();
+        $item->userBidsCount = $item->getUserBidsCount();
 
         return view('item')->with([
             'item' => $item,

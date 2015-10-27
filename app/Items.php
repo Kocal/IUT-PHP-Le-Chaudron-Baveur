@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
 class Items extends Model {
-    
+
     /**
      * @var array Champs qui constituent un Item
      */
@@ -36,35 +36,12 @@ class Items extends Model {
     }
 
     /**
-     * Retourne la différence entre la date de fin de l'enchère et aujourd'hui
+     * Retourne les enchères associées à la vente
      *
-     * @return int timestamp
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function getDateDiff() {
-        return strtotime($this->date_end) - time();
-    }
-
-    /**
-     * Retourne le nombre d'essais effectués sur une enchère par l'utilisateur $user_id
-     *
-     * @param int $user_id Identifiant de l'utilisateur à tester
-     * @return int Nombre d'essais effectués sur une enchère par l'utilisateur
-     */
-    public function getBidCountByUserId($user_id) {
-        return Bids
-            ::where('user_id', $user_id)
-            ->where('item_id', $this->id)
-            ->count();
-    }
-
-    /**
-     * Retourne le montant de la dernière enchère effectuée sur cette vente.
-     * S'il n'y a eu aucune enchère sur l'annonce, alors on retourne le prix initial de l'annonce.
-     *
-     * @return float Un Prix
-     */
-    public function getPrice() {
-        return Bids::getLastBidPriceOrProductPrice($this->id);
+    public function bids() {
+        return $this->hasMany('\App\Bids', 'item_id');
     }
 
     /**
@@ -75,4 +52,48 @@ class Items extends Model {
     public function isSeller() {
         return Auth::check() && Auth::user()->id == $this->user_id;
     }
+
+    /**
+     * Retourne la différence entre la date de fin de l'enchère et aujourd'hui
+     *
+     * @return int timestamp
+     */
+    public function getDateDiff() {
+        return strtotime($this->date_end) - time();
+    }
+
+    /**
+     * Retourne soit le montant de la dernière enchère, soit le montant initial de la vente
+     *
+     * @return mixed
+     */
+    public function getPrice() {
+        $bids = $this->bids();
+        $higherBid = $bids->select('price')->orderBy('price', 'desc')->first();
+
+        if($higherBid === null) {
+            return $this->price;
+        }
+
+        return $higherBid->price;
+    }
+
+    /**
+     * Retourne le nombre d'essais d'enchère que l'utilisateur a déjà fait sur l'annonce en cours
+     *
+     * @return int
+     */
+    public function getUserBidsCount() {
+        return Auth::check() ? $this->bids()->where('user_id', Auth::user()->id)->count('id') : 0;
+    }
+
+    /**
+     * Détermine si l'utilisateur peut renchérir cette annonce ou non
+     *
+     * @return bool
+     */
+    public function getUserCantBid() {
+        return Auth::Check() && $this->userBidsCount >= MAX_BID_PER_SALE;
+    }
+
 }

@@ -16,15 +16,6 @@ setlocale(LC_ALL, 'fr_FR.UTF-8');
 @endsection
 
 @section('content')
-    <?php
-    $price = $item->getPrice();
-    $isSeller = $item->isSeller();
-    $bidCount = $item->getBidCountByUserId(Auth::check() ? Auth::user()->id : null);
-    $cantBid = Auth::check() && $bidCount == MAX_BID_PER_SALE;
-
-    $min_bid = $price + 1;
-    $form_id = 'form_' . $item->id;
-    ?>
     <div class="row">
         <div class="col-md-4">
             <div class="text-center">
@@ -50,28 +41,28 @@ setlocale(LC_ALL, 'fr_FR.UTF-8');
             @endif
             <hr>
             <p>
-                Dernière enchère : <b>{{ $price }} &euro;</b>
+                Dernière enchère : <b>{{ $item->getPrice() }} &euro;</b>
             </p>
 
             <p class="text-center">
-                @if($isSeller)
+                @if($item->userIsSeller)
                     <b>Vous ne pouvez pas renchérir votre propre enchère !</b>
-                @elseif($cantBid)
+                @elseif($item->userCantBid)
                     <b>Vous avez dépassé le nombre maximum d'essais pour cette enchère !</b>
                 @else
                     {!! BootForm::open()->action(route('bid', ['id' => $item->id]))->class('form-inline') !!}
-                        <input type="hidden" name="_form_id" value="{{ $form_id }}">
+                        <input type="hidden" name="_form_id" value="{{ $item->form_id }}">
 
-                        <div class="form-group {!! $errors->$form_id->has('price')  ? 'has-error' : '' !!}">
-                            {!! $errors->$form_id->first('price', '<div class="alert alert-danger">:message</div>') !!}
+                        <div class="form-group {!! $errors->{$item->form_id}->has('price')  ? 'has-error' : '' !!}">
+                            {!! $errors->{$item->form_id}->first('price', '<div class="alert alert-danger">:message</div>') !!}
                             <div class="input-group">
-                                <input type="number"  name="price" class="form-control" value="{{ $errors->$form_id->has('price') ? old('price') : '' }}"
-                                       placeholder="{{ sprintf('%-.2f', $min_bid) }}" step="0.01" min="{{ str_replace(',', '.', $min_bid) }}">
+                                <input type="number"  name="price" class="form-control" value="{{ $errors->{$item->form_id}->has('price') ? old('price') : '' }}"
+                                       placeholder="{{ sprintf('%-.2f', $item->lastBidPrice) }}" step="0.01" min="{{ str_replace(',', '.', $item->lastBidPrice) }}">
                                 <div class="input-group-addon">&euro;</div>
                             </div>
 
                             <div class="input-group">
-                                {!! BootForm::submit('Enchérir' . ' (' . $bidCount . '/' . MAX_BID_PER_SALE  . ')')
+                                {!! BootForm::submit('Enchérir' . ' (' . $item->userBidsCount . '/' . MAX_BID_PER_SALE  . ')')
                                     ->class('btn btn-primary') !!}
                             </div>
                         </div>

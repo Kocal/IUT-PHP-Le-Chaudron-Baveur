@@ -32,6 +32,7 @@ class BidsController extends Controller {
 
         // Les messages d'erreurs seront désormais spécifiques à un formulaire, et pas tous
         $this->validatesRequestErrorBag = $form_id;
+
         // Permettra de savoir dans quel formulaire s'est produite l'erreur
         $request->session()->flash('errorBag', $this->validatesRequestErrorBag);
 
@@ -59,7 +60,7 @@ class BidsController extends Controller {
             }
 
             // L'utilisateur a atteint le nombre maximum de renchère sur cette annonce
-            if($item->getBidCountByUserId(Auth::user()->id) >= MAX_BID_PER_SALE) {
+            if($item->getUserCantBid()) {
                 $denied = true;
                 $request->session()->flash('message', 'danger|Vous avez dépassé les ' . MAX_BID_PER_SALE . ' propositions d\'enchères maximales !');
             }
