@@ -13,8 +13,12 @@ class AdminController extends Controller {
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function purgeAds(Request $request) {
+    public function refine(Request $request) {
         $request->session()->flash('message', 'success|Les annonces trop anciennes ont été purgées avec succès !');
+
+
+
+        die();
         return redirect('admin');
     }
 }

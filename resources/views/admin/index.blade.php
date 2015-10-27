@@ -5,10 +5,10 @@
 @section('content')
     <section class="text-center">
         <h1>Administration</h1>
-        <h2>Voulez-vous purger les vieilles annonces ?</h2>
+        <h2>Voulez-vous épurer la base de données ?</h2>
 
-        {!! BootForm::open()->method('post')->action(route('admin::purge')) !!}
-        {!! BootForm::submit('OUI JE LE VEUX', 'btn btn-danger big-red-button')->onclick('return confirm(\'ES-TU SÛR ????\')') !!}
+        {!! BootForm::open()->method('post')->action(route('admin::refine')) !!}
+        {!! BootForm::submit('Oui', 'btn btn-danger big-red-button')->onclick('return confirm(\'Êtes-vous vraiment sûr\')') !!}
         {!! BootForm::close() !!}
     </section>
 @endsection

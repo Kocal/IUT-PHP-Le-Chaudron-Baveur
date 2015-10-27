@@ -1,5 +1,4 @@
 <?php
-
 define('MAX_BID_PER_SALE', 4);
 
 /*
@@ -17,9 +16,7 @@ define('MAX_BID_PER_SALE', 4);
  */
 
 // Affiche l'accueil du site
-Route::get('/', ['as' => 'index', function() {
-    return view('index');
-}]);
+Route::get('/', ['as' => 'index', 'uses' => 'PagesController@index']);
 
 // Affiche les enchères
 Route::get('items', ['as' => 'items', 'uses' => 'ItemsController@index']);
@@ -74,8 +71,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin::', 'middleware' => 'admin'], 
         return view('admin.index');
     }]);
 
-    // Purge les vieilles annonces
-    Route::post('purge', ['as' => 'purge', 'uses' => 'AdminController@purgeAds']);
+    // Epuration de la bdd
+    Route::post('refine', ['as' => 'purge', 'uses' => 'AdminController@refine']);
 });
 
 Route::controllers([
