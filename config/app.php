@@ -26,7 +26,7 @@ return [
     |
     */
 
-    'url' => 'http://localhost/LeChaudronBaveur/public/',
+    'url' => 'http://lechaudronbaveur',
 
     /*
     |--------------------------------------------------------------------------
