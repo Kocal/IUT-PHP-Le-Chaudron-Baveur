@@ -35,7 +35,7 @@ $factory->define(App\Items::class, function (Faker\Generator $faker) {
         'description' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. A quibusdam sed sequi voluptatibus. A beatae culpa eius eos labore magnam magni, minima nobis nulla provident qui quis quisquam, sit totam.',
         'photo' => '',
         'price' => mt_rand(500, 10000) / 100,
-        'date_start' => '2015-' . mt_rand(10, 12) . '-' . mt_rand(24, 26),
+        'date_start' => '2015-10-' . mt_rand(24, 26),
         'date_end' => '2015-' . mt_rand(11, 12) . '-' . mt_rand(1, 30)
     ];
 });
