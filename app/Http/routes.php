@@ -66,13 +66,12 @@ Route::post('auth/register', ['as' => 'register', 'uses' => 'Auth\AuthController
  */
 
 Route::group(['prefix' => 'admin', 'as' => 'admin::', 'middleware' => 'admin'], function() {
+
     // Affiche la page d'accueil de l'administration
-    Route::get('/', ['as' => 'index', function() {
-        return view('admin.index');
-    }]);
+    Route::get('/', ['as' => 'index', 'uses' => 'AdminController@index']);
 
     // Epuration de la bdd
-    Route::post('refine', ['as' => 'purge', 'uses' => 'AdminController@refine']);
+    Route::post('refine', ['as' => 'refine', 'uses' => 'AdminController@refine']);
 });
 
 Route::controllers([

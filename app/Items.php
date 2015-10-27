@@ -4,9 +4,12 @@ namespace App;
 
 use DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
 class Items extends Model {
+
+    use SoftDeletes;
 
     /**
      * @var array Champs qui constituent un Item
@@ -16,6 +19,11 @@ class Items extends Model {
         'name', 'photo',  'category_id',
         'price', 'date_start', 'date_end',
         'description'];
+
+    /**
+     * @var array Permet d'utiliser le softDelete
+     */
+    protected $dates = ['deleted_at'];
 
     /**
      * Retourne les informations sur le vendeur de l'enchère

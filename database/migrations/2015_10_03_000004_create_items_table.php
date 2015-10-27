@@ -23,6 +23,7 @@ class CreateItemsTable extends Migration
             $table->date('date_end');
             $table->date('date_start');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
