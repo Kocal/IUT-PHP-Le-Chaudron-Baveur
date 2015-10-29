@@ -48,7 +48,7 @@ function displayAlert() {
                                     <li><a href="{{ route('admin::index') }}">Administration</a></li>
                                 @endif
                                 <li><a href="{{ route('profile') }}">Mon profil</a></li>
-                                <li><a href="{{ route('logout') }}">Se déconnecter ({{Auth::user()->email }})</a></li>
+                                <li><a href="{{ route('logout') }}">Se déconnecter ({{Auth::user()->pseudo }})</a></li>
                             @else
                                 <li><a href="{{ route('register') }}">S'inscrire</a></li>
                                 <li><a href="{{ route('login') }}">Se connecter</a></li>

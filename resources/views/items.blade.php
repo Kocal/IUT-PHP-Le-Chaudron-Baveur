@@ -60,7 +60,7 @@ setlocale(LC_ALL, 'fr_FR.UTF-8');
             <tr{{ $errors->{$item->form_id}->has('price') ? 'class="danger"' : '' }}>
                 <td><a href="{{ route('item', ['id' => $item->id]) }}">{{ $item->name }}</a></td>
                 <td>{{ $item->category->name }}</td>
-                <td class="text-center">{{ $item->user->email }}{{ $item->userIsSeller ? ' (vous)' : '' }}</td>
+                <td class="text-center">{{ $item->user->pseudo }}{{ $item->userIsSeller ? ' (vous)' : '' }}</td>
                 <td class="text-right"><time class="countdown text-right" data-timestamp="{{ $item->getDateDiff() }}">{{ strftime('%A %d %B %Y', strtotime($item->date_end)) }}</time></td>
                 <td class="text-right"><b>{{ $item->lastBidPrice }} €</b></td>
                 <td class="text-center">

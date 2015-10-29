@@ -73,11 +73,15 @@ class AuthController extends Controller
         // Si on n'a pas encore d'utilisateurs, alors ce nouvel utilisateur est Admin, sinon il est Particulier
         $data['user_type_id'] = (User::first() === null) ? 1 : 2;
 
+        // Génération d'un pseudo unique, puisque les comptes peuvent être supprimé
+        $data['pseudo'] = strtolower(substr($data['last_name'], 0, 1) . substr($data['first_name'], 0, 2) . '.' . substr($data['email'], 0, 3) . str_random(9));
+
         // Création de l'utilisateur dans la base de données
         return User::create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             'email' => $data['email'],
+            'pseudo' => $data['pseudo'],
             'phone' => $data['phone'],
             'user_type_id' => $data['user_type_id'],
             'address' => $data['address'],

@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use DB;
+use App\Categories;
+use App\Http\Requests;
 use App\Items;
 use Illuminate\Http\Request;
-use App\Http\Requests;
-use App\Categories;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\ImageManager;
 
