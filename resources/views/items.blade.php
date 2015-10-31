@@ -23,13 +23,14 @@ setlocale(LC_ALL, 'fr_FR.UTF-8');
 @section('content')
     <h2 class="text-center page-title">Enchères en cours</h2>
     <hr>
+    {{--
     <div class="row">
         {!! BootForm::open()->action(route('redirect_to'))->method('get')->name('form_sort')->class('form-inline text-right') !!}
         {!! BootForm::select('Trier par :&nbsp;', 'url')->options($sortOptionsDefinitions)->select(Request::url()) !!}
         {!! BootForm::submit('Trier') !!}
         {!! BootForm::close() !!}
     </div>
-    <hr>
+    <hr> --}}
     {{--
         # Bricolage pour afficher le message d'erreur après avoir proposé un prix trop bas.
 
@@ -56,8 +57,9 @@ setlocale(LC_ALL, 'fr_FR.UTF-8');
         </thead>
 
         <tbody>
-            @foreach($items as $item)
-            <tr{{ $errors->{$item->form_id}->has('price') ? 'class="danger"' : '' }}>
+        @foreach($items as $item)
+            <?php $form_id = 'form_' . $item->id; ?>
+            <tr{{ $errors->$form_id->has('price') ? 'class="danger"' : '' }}>
                 <td><a href="{{ route('item', ['id' => $item->id]) }}">{{ $item->name }}</a></td>
                 <td>{{ $item->category->name }}</td>
                 <td class="text-center">{{ $item->user->pseudo }}{{ $item->userIsSeller ? ' (vous)' : '' }}</td>
@@ -70,12 +72,12 @@ setlocale(LC_ALL, 'fr_FR.UTF-8');
                         <b>Vous avez dépassé le nombre maximum d'essais pour cette enchère !</b>
                     @else
                         {!! BootForm::open()->action(route('bid', ['id' => $item->id]))->class('form-inline text-right form-small') !!}
-                            <input type="hidden" name="_form_id" value="{{ $item->form_id }}">
+                            <input type="hidden" name="_form_id" value="{{ $form_id }}">
 
-                            <div class="form-group {!! $errors->{$item->form_id}->has('price')  ? 'has-error' : '' !!}">
+                            <div class="form-group {!! $errors->$form_id->has('price')  ? 'has-error' : '' !!}">
                                 <div class="input-group">
-                                    <input type="number"  name="price" class="form-control input-sm" value="{{ $errors->{$item->form_id}->has('price') ? old('price') : '' }}"
-                                           placeholder="{{ sprintf('%-.2f', $item->lastBidPrice) }}" step="0.01" min="{{ str_replace(',', '.', $item->lastBidPrice) }}" required>
+                                    <input type="number"  name="price" class="form-control input-sm" value="{{ $errors->$form_id->has('price') ? old('price') : '' }}"
+                                           placeholder="{{ sprintf('%-.2f', $item->lastBidPrice + 1) }}" step="0.01" min="{{ str_replace(',', '.', $item->lastBidPrice + 1) }}" required>
                                     <div class="input-group-addon">&euro;</div>
                                     <span class="input-group-btn">
                                         {!! BootForm::submit('Enchérir' . ' (' . $item->userBidsCount . '/' . MAX_BID_PER_SALE  . ')')
@@ -87,7 +89,7 @@ setlocale(LC_ALL, 'fr_FR.UTF-8');
                     @endif
                 </td>
             </tr>
-            @endforeach
+        @endforeach
         </tbody>
     </table>
 

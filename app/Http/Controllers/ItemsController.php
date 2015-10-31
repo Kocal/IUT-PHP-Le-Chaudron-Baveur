@@ -47,7 +47,7 @@ class ItemsController extends Controller {
             ::where('date_start', '<=',  date('Y-m-d'))
             ->where('date_end', '>',  date('Y-m-d'))
             ->with('category', 'user', 'bids')
-            ->paginate(30);
+            ->paginate(20);
 
         foreach($items as $item) {
             $bids = $item->bids();
@@ -91,6 +91,7 @@ class ItemsController extends Controller {
                 'id', 'user_id', 'category_id',
                 'name', 'description', 'photo', 'price',
                 'date_start', 'date_end'])
+            ->withTrashed()
             ->where('id', $item_id)
             ->first();
 
@@ -124,15 +125,13 @@ class ItemsController extends Controller {
         }
 
         $item->form_id = 'form_' . $item->id;
+        $item->userIsSeller = $isSeller;
         $item->lastBidPrice = $item->getPrice();
         $item->userBidsCount = $item->getUserBidsCount();
+        $item->userCantBid = Auth::Check() && $item->userBidsCount >= MAX_BID_PER_SALE;
 
-        return view('item')->with([
-            'item' => $item,
-            'starting' => $starting,
-            'started' => $started,
-            'finished' => $finished
-        ]);
+        return view('item')
+            ->with(compact('item', 'started', 'starting', 'finished'));
     }
 
     /**

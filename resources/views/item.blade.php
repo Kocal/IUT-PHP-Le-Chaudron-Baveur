@@ -29,7 +29,7 @@ setlocale(LC_ALL, 'fr_FR.UTF-8');
             </div>
             <hr>
             <p>
-                Vendeur : <b>{{ $item->user->email }}</b><br>
+                Vendeur : <b>{{ $item->user->pseudo }}</b><br>
                 Catégorie : <b>{{ $item->category->name }}</b>
             </p>
 
@@ -45,28 +45,36 @@ setlocale(LC_ALL, 'fr_FR.UTF-8');
             </p>
 
             <p class="text-center">
-                @if($item->userIsSeller)
-                    <b>Vous ne pouvez pas renchérir votre propre enchère !</b>
-                @elseif($item->userCantBid)
-                    <b>Vous avez dépassé le nombre maximum d'essais pour cette enchère !</b>
-                @else
-                    {!! BootForm::open()->action(route('bid', ['id' => $item->id]))->class('form-inline') !!}
-                        <input type="hidden" name="_form_id" value="{{ $item->form_id }}">
+                @if($starting)
+                    <b>La vente n'a pas encore débuté.</b>
+                @elseif($started)
+                    @if($item->userIsSeller)
+                        <b>Vous ne pouvez pas renchérir votre propre enchère !</b>
+                    @elseif($item->userCantBid)
+                        <b>Vous avez dépassé le nombre maximum d'essais pour cette enchère !</b>
+                    @else
+                        <?php $form_id = 'form_' . $item->id; ?>
+                        {!! BootForm::open()->action(route('bid', ['id' => $item->id]))->class('form-inline') !!}
+                            <input type="hidden" name="_form_id" value="{{ $item->form_id }}">
 
-                        <div class="form-group {!! $errors->{$item->form_id}->has('price')  ? 'has-error' : '' !!}">
-                            {!! $errors->{$item->form_id}->first('price', '<div class="alert alert-danger">:message</div>') !!}
-                            <div class="input-group">
-                                <input type="number"  name="price" class="form-control" value="{{ $errors->{$item->form_id}->has('price') ? old('price') : '' }}"
-                                       placeholder="{{ sprintf('%-.2f', $item->lastBidPrice) }}" step="0.01" min="{{ str_replace(',', '.', $item->lastBidPrice) }}">
-                                <div class="input-group-addon">&euro;</div>
-                            </div>
+                            <div class="form-group {!! $errors->$form_id->has('price')  ? 'has-error' : '' !!}">
+                                {!! $errors->$form_id->first('price', '<div class="alert alert-danger">:message</div>') !!}
+                                <div class="input-group">
+                                    <input type="number"  name="price" class="form-control" value="{{ $errors->$form_id->has('price') ? old('price') : '' }}"
+                                           placeholder="{{ sprintf('%-.2f', $item->lastBidPrice + 1 ) }}" step="0.01" min="{{ str_replace(',', '.', $item->lastBidPrice + 1) }}">
+                                    <div class="input-group-addon">&euro;</div>
+                                </div>
 
-                            <div class="input-group">
-                                {!! BootForm::submit('Enchérir' . ' (' . $item->userBidsCount . '/' . MAX_BID_PER_SALE  . ')')
-                                    ->class('btn btn-primary') !!}
+                                <div class="input-group">
+                                    {!! BootForm::submit('Enchérir' . ' (' . $item->userBidsCount . '/' . MAX_BID_PER_SALE  . ')')
+                                        ->class('btn btn-primary') !!}
+                                </div>
                             </div>
-                        </div>
-                    {!! BootForm::close() !!}
+                        {!! BootForm::close() !!}
+
+                    @endif
+                @elseif($finished)
+                    <b>La vente est terminée !</b>
                 @endif
             </p>
         </div>

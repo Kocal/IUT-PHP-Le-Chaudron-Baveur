@@ -11,7 +11,7 @@ class ItemsSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Items::class, 5)->create()->each(function($item) {
+        factory(App\Items::class, 100)->create()->each(function($item) {
             $item->save();
         });
     }

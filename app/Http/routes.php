@@ -11,10 +11,10 @@ define('MAX_BID_PER_SALE', 4);
 | and give it the controller to call when that URI is requested.
 |
 */
+
 /*
  * Routes de base
  */
-
 // Affiche l'accueil du site
 Route::get('/', ['as' => 'index', 'uses' => 'PagesController@index']);
 
@@ -48,7 +48,6 @@ Route::get('profile', ['as' => 'profile', 'middleware' => 'auth', function() {
 /*
  * Authentification
  */
-
 // Affiche le formulaire de connexion
 Route::get('auth/login', ['as' => 'login', 'uses' => 'Auth\AuthController@getLogin']);
 // Traitement pour la connexion
@@ -61,10 +60,11 @@ Route::get('auth/register', ['as' => 'register', 'uses' => 'Auth\AuthController@
 // Traitement pour l'inscription
 Route::post('auth/register', ['as' => 'register', 'uses' => 'Auth\AuthController@postRegister']);
 
+Route::get('enable/account/{user_id}/{credentials_hash}/{deleted_at_hash}', ['as' => 'enable_account', 'uses' => 'Auth\AuthController@enableAccount']);
+
 /*
  * Administration
  */
-
 Route::group(['prefix' => 'admin', 'as' => 'admin::', 'middleware' => 'admin'], function() {
 
     // Affiche la page d'accueil de l'administration

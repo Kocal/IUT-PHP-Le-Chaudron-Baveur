@@ -103,5 +103,4 @@ class Items extends Model {
     public function getUserCantBid() {
         return Auth::Check() && $this->userBidsCount >= MAX_BID_PER_SALE;
     }
-
 }

@@ -74,7 +74,7 @@ class AuthController extends Controller
         $data['user_type_id'] = (User::first() === null) ? 1 : 2;
 
         // Génération d'un pseudo unique, puisque les comptes peuvent être supprimé
-        $data['pseudo'] = strtolower(substr($data['last_name'], 0, 1) . substr($data['first_name'], 0, 2) . '.' . substr($data['email'], 0, 3) . str_random(9));
+        $data['pseudo'] = strtolower(substr($data['last_name'], 0, 1) . substr($data['first_name'], 0, 2) . '.' . substr($data['email'], 0, 3) . '.' . str_random(9));
 
         // Création de l'utilisateur dans la base de données
         return User::create([
@@ -126,9 +126,59 @@ class AuthController extends Controller
         return redirect($this->redirectPath());
     }
 
+    /**
+     * Déconnexion de l'utilisateur
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function getLogout(Request $request) {
         Auth::logout();
         $request->session()->flash('message', 'success|Vous vous êtes bien déconnecté !');
         return redirect(property_exists($this, 'redirectAfterLogout') ? $this->redirectAfterLogout : '/');
+    }
+
+    /**
+     * Permet de ré-activer un compte
+     *
+     * @param Request $request
+     * @param int $user_id
+     * @param string $credentials_hash
+     * @param string $deleted_at_hash
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function enableAccount(Request $request, $user_id, $credentials_hash, $deleted_at_hash) {
+        // Oui, c'est sale, mais c'est pour éviter de dire à un utilisateur malveillant que le compte n'existe pas, existe,
+        // que c'est le hash des credentials qui est mauvais, ou que c'est le hash du deleted_at qui est mauvais
+        // Au final, s'il y a une étape qui a merdée, on lui dit juste que la réactivation était impossible. :-)
+        $error = false;
+
+        // On n'oublie pas le withTrashed(), sinon ça ne renvoie rien
+        $user = User::withTrashed()->find($user_id);
+
+        if($user === null) {
+            $error = true;
+        }
+
+        if(!$error && (
+                $credentials_hash !== $user->getHashedCredentials() ||
+                $deleted_at_hash !== $user->getHashedDeletedAt()
+            )
+        ) {
+            $error = true;
+        }
+
+        if($error) {
+            $request->session()->flash('message', 'danger|La réactivation de ce compte est impossible.');
+        } else {
+            // Réactivation du compte
+            $user->deleted_at = null;
+            $user->update();
+
+            Auth::loginUsingId($user->id);
+
+            $request->session()->flash('message', 'success|Votre compte a été réactivé avec succès !');
+        }
+
+        return redirect(route('index'));
     }
 }
