@@ -8,7 +8,7 @@ use App\Http\Requests;
 
 class SalesController extends Controller {
     public function index() {
-        $categories = Categories::getSlugs();
+        $categories = Categories::getCategories();
 
         return view('sell')
                ->with(compact('categories'));

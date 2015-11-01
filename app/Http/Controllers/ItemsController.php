@@ -145,7 +145,7 @@ class ItemsController extends Controller {
 
         $this->validate($request, [
             'name' => 'required|max:200',
-            'category' => 'required|in:' . implode(',', Categories::getSlugs()),
+            'category' => 'required|in:' . implode(',', array_keys(Categories::getCategories())),
             'photo' => 'required|image',
             'price' => 'required|numeric|min:0',
             'date_start' => 'required|date|after:' . date('Y-m-d'),

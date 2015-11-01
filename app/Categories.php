@@ -7,17 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Categories extends Model {
     /**
-     * Permet de retourner la liste des "slug" des Catégories
      * @return array
      */
-    public static function getSlugs() {
-        $slugs = DB::table('categories')->get(['slug']);
-        $slugsToReturn = [];
+    public static function getCategories() {
+        $categories = DB::table('categories')->get(['name', 'slug']);
+        $categoriesToReturn = [];
 
-        foreach($slugs as $slug) {
-            $slugsToReturn[] = $slug->slug;
+        foreach($categories as $category) {
+            $categoriesToReturn[$category->slug] = $category->name;
         }
 
-        return $slugsToReturn;
+        return $categoriesToReturn;
     }
 }
