@@ -28,7 +28,7 @@ Route::get('item/{id}', ['as' => 'item', 'uses' => 'ItemsController@see'])->wher
 // Traitement pour enchérir sur une annonce
 Route::post('item/{id}', ['as' => 'bid', 'middleware' => 'auth', 'uses' => 'BidsController@add']);
 
-Route::group(['prefix' => 'sale', 'as' => 'sell::'], function() {
+Route::group(['prefix' => 'sell', 'as' => 'sell::'], function() {
     // Affiche le formulaire de mise en vente
     Route::get('/', ['as' => 'index', 'middleware' => 'auth', 'uses' => 'SalesController@index']);
     // Ajout d'une nouvelle vente dans la bdd

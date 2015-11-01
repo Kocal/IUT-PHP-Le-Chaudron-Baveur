@@ -87,15 +87,15 @@ class ItemsController extends Controller {
      */
     public function see(Request $request, $item_id) {
         $item = Items
-            ::select([
+            ::withTrashed()
+            ->select([
                 'id', 'user_id', 'category_id',
                 'name', 'description', 'photo', 'price',
                 'date_start', 'date_end'])
-            ->withTrashed()
             ->where('id', $item_id)
             ->first();
 
-        $isSeller = $item->isSeller();
+        $isSeller = ($item != null) ? $item->isSeller() : false;
         $starting = false; // La vente n'a pas encore débutée
         $started = false; // La vente est en cours
         $finished = false; // La vente est terminé
@@ -119,7 +119,7 @@ class ItemsController extends Controller {
         }
 
         // Voir le tableau des accès selon les différents critères dans le cahier des charges
-        if(!$isSeller && $starting) {
+        if($item === null || !$isSeller && $starting) {
             $request->session()->flash('message', 'danger|Cette vente n\'existe pas.');
             return redirect(route('items'));
         }
