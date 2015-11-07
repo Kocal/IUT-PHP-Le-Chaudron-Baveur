@@ -47,6 +47,7 @@ setlocale(LC_ALL, 'fr_FR.UTF-8');
     <table class="table table-responsive table-striped items-table">
         <thead>
             <tr>
+                <th></th>
                 <th>Nom</th>
                 <th>Catégorie</th>
                 <th>Vendeur</th>
@@ -60,6 +61,15 @@ setlocale(LC_ALL, 'fr_FR.UTF-8');
         @foreach($items as $item)
             <?php $form_id = 'form_' . $item->id; ?>
             <tr{{ $errors->$form_id->has('price') ? 'class="danger"' : '' }}>
+                <td>
+                    @if($item->photo)
+                        <div class="item--thumbnail">
+                            <a href="{{ route('item', ['id' => $item->id]) }}">
+                                <img width="60px" src="{{ asset(preg_replace('/\.jpg$/', '_thumb.jpg', $item->photo)) }}" title="{{ $item->name }}" alt="Photo vente : {{ $item->name }}">
+                            </a>
+                        </div>
+                    @endif
+                </td>
                 <td><a href="{{ route('item', ['id' => $item->id]) }}">{{ $item->name }}</a></td>
                 <td>{{ $item->category->name }}</td>
                 <td class="text-center">{{ $item->user->pseudo }}{{ $item->userIsSeller ? ' (vous)' : '' }}</td>

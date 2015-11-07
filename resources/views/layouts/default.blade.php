@@ -47,7 +47,7 @@ function displayAlert() {
                                 @if(Auth::user()->user_type_id == 1)
                                     <li><a href="{{ route('admin::index') }}">Administration</a></li>
                                 @endif
-                                {{-- <li><a href="{{ route('profile') }}">Mon profil</a></li> --}}
+                                <li><a href="{{ route('account::index') }}">Mon profil</a></li>
                                 <li><a href="{{ route('logout') }}">Se déconnecter ({{Auth::user()->pseudo }})</a></li>
                             @else
                                 <li><a href="{{ route('register') }}">S'inscrire</a></li>

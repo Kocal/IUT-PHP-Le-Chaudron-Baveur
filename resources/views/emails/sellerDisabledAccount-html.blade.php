@@ -5,7 +5,7 @@
     <br>
     Votre compte <b>{{ $seller->pseudo }}</b> vient d'être désactivé sur le site du Chaudron Baveur, car vous n'avez plus d'annonce en ligne.<br>
     <br>
-    Vous pouvez réactiver votre compte en cliquant <a href="{{ route('enable_account', [
+    Vous pouvez réactiver votre compte en cliquant <a href="{{ route('account::enable', [
             'user_id' => $seller->id,
             'credentials_hash' => $seller->getHashedCredentials(),
             'deleted_at_hash' => $seller->getHashedDeletedAt()

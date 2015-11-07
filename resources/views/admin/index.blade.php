@@ -61,7 +61,7 @@ use Illuminate\Support\Str;
                         <td><a href="{{ route('item', ['id' => $item->id]) }}">{{ Str::words($item->name, 3) }}</a></td>
                         <td>{{ $item->user->pseudo }}</td>
                         <td>{{ $item->gotBid ? $item->lastBid->user->pseudo : 'aucun'  }}</td>
-                        <td>{{ $item->price }}</td>
+                        <td>{{ $item->price }} €</td>
                         <td>{{ $item->gotBid ? sprintf('%-.2f', $item->lastBid->price) . ' €' : 'Ø' }}</td>
                         <td>{{ strftime('%A %d %B %Y', strtotime($item->date_end)) }}</td>
                     </tr>
