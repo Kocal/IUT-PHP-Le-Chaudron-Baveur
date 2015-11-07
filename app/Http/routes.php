@@ -18,16 +18,17 @@ define('MAX_BID_PER_SALE', 4);
 // Affiche l'accueil du site
 Route::get('/', ['as' => 'index', 'uses' => 'PagesController@index']);
 
-// Affiche les enchères
+// Affiche les ventes en cours
 Route::get('items', ['as' => 'items', 'uses' => 'ItemsController@index']);
 Route::get('items/sort/by/{type}/{sort}', ['as' => 'items_sort', 'uses' => 'ItemsController@index']);
 
 // Affiche l'enchère n°$id
 Route::get('item/{id}', ['as' => 'item', 'uses' => 'ItemsController@see'])->where('id', '[0-9]+');
 
-// Traitement pour enchérir sur une annonce
+// Enchérir sur une annonce
 Route::post('item/{id}', ['as' => 'bid', 'middleware' => 'auth', 'uses' => 'BidsController@add']);
 
+// Mise en vente
 Route::group(['prefix' => 'sell', 'as' => 'sell::'], function() {
     // Affiche le formulaire de mise en vente
     Route::get('/', ['as' => 'index', 'middleware' => 'auth', 'uses' => 'SalesController@index']);
@@ -40,10 +41,33 @@ Route::get('redirect_to', ['as' => 'redirect_to', function() {
     return redirect(Input::get('url', url('/')));
 }]);
 
-// ça on verra un autre jour
-Route::get('profile', ['as' => 'profile', 'middleware' => 'auth', function() {
-    return view('profile');
-}]);
+/*
+ * Utilisateur
+ */
+Route::group([
+    'prefix' => 'account',
+    'as' => 'account::',
+    'middleware' => 'auth'
+], function() {
+    // Affiche la page de profil
+    Route::get('/', [
+        'as' => 'index',
+        'uses' => 'UsersController@index'
+    ]);
+
+    // Réactive un compte qui a été désactivé
+    Route::get('enable/{user_id}/{credentials_hash}/{deleted_at_hash}', [
+        'as' => 'enable',
+        'uses' => 'UsersController@enable'
+    ]);
+
+    // Supprime un compte (mais genre vraiment)
+    Route::post('delete/{user_id}/{credentials_hash}', [
+        'as' => 'delete',
+        'uses' => 'UsersController@delete'
+    ]);
+});
+
 
 /*
  * Authentification
@@ -60,13 +84,11 @@ Route::get('auth/register', ['as' => 'register', 'uses' => 'Auth\AuthController@
 // Traitement pour l'inscription
 Route::post('auth/register', ['as' => 'register', 'uses' => 'Auth\AuthController@postRegister']);
 
-Route::get('enable/account/{user_id}/{credentials_hash}/{deleted_at_hash}', ['as' => 'enable_account', 'uses' => 'Auth\AuthController@enableAccount']);
 
 /*
  * Administration
  */
 Route::group(['prefix' => 'admin', 'as' => 'admin::', 'middleware' => 'admin'], function() {
-
     // Affiche la page d'accueil de l'administration
     Route::get('/', ['as' => 'index', 'uses' => 'AdminController@index']);
 
