@@ -23,6 +23,11 @@ class Bids extends Model {
         return $this->belongsTo('\App\User');
     }
 
+    /**
+     * Fait la relation entre une enchère et son item
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function items() {
         return $this->belongsTo('\App\Items', 'item_id', 'id', '=');
     }

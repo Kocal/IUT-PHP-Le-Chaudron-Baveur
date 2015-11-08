@@ -6,7 +6,6 @@ use Auth;
 use App\User;
 use App\Http\Requests;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Hash;
 
@@ -18,10 +17,12 @@ class UsersController extends Controller {
      * @return \Illuminate\View\View
      */
     public function index() {
+        $user = Auth::user();
+
         return view('profile', [
-            'items' => Auth::user()->items()->get(),
-            'bids' => Auth::user()->bids()->with('items')->get(),
-            'credentials_hash' => Auth::user()->getHashedCredentials()
+            'items' => $user->items()->get(),
+            'bids' => $user->bids()->with('items')->get(),
+            'credentials_hash' => $useré->getHashedCredentials()
         ]);
     }
 
@@ -71,6 +72,8 @@ class UsersController extends Controller {
     }
 
     /**
+     * Supprime un compte de la base de données
+     *
      * @param Request $request
      * @param $credentials_hash
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
@@ -129,7 +132,5 @@ class UsersController extends Controller {
             $request->session()->flash('message', 'danger|?????????????????? :-))))))) ffs fgt');
             return redirect(route('index'));
         }
-
-        die();
     }
 }
