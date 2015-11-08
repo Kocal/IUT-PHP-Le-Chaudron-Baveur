@@ -149,7 +149,7 @@ return [
         AdamWathan\BootForms\BootFormsServiceProvider::class,
         Overtrue\LaravelLang\TranslationServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
-
+        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
     ],
 
     /*
