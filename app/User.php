@@ -82,19 +82,41 @@ class User extends Model implements AuthenticatableContract,
             ->groupBy('user_id');
     }
 
-    public function getHashedCredentials() {
-        return md5(
-            $this->first_name . '&&' .
+    /**
+     * Retourne un certificat propre à l'utilisateur connecté
+     *
+     * @return string
+     */
+    public function getCredentials() {
+        return $this->first_name . '&&' .
             $this->last_name . '&&' .
             $this->email . '&&' .
-            $this->pseudo
-        );
+            $this->pseudo;
     }
 
+    /**
+     * Retourne le hash du certificat de l'utilisateur connecté
+     *
+     * @return string
+     */
+    public function getHashedCredentials() {
+        return sha1($this->getCredentials());
+    }
+
+    /**
+     * Retourne un hash de la date de suppression
+     *
+     * @return string
+     */
     public function getHashedDeletedAt() {
-        return md5($this->deleted_at);
+        return sha1($this->deleted_at);
     }
 
+    /**
+     * Détermine si l'utilisateur connecté est admin
+     *
+     * @return bool
+     */
     public function isAdmin() {
         return $this->user_type_id === '1';
     }

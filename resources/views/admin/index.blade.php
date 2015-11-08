@@ -29,7 +29,7 @@ use Illuminate\Support\Str;
                                         <li>{{ $log }}</li>
                                     @endif
                                 @endforeach
-                            <ul>
+                            </ul>
                         </li>
                     </ul>
                 @endforeach

@@ -8,11 +8,13 @@ use App\Sales;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Requests;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class AdminController extends Controller {
 
     public function index(Request $request) {
+
         $items = $this->getItemsToHandle();
 
         foreach($items as $item) {

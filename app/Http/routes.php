@@ -62,7 +62,7 @@ Route::group([
     ]);
 
     // Supprime un compte (mais genre vraiment)
-    Route::post('delete/{user_id}/{credentials_hash}', [
+    Route::post('delete/{credentials_hash}', [
         'as' => 'delete',
         'uses' => 'UsersController@delete'
     ]);

@@ -136,49 +136,4 @@ class AuthController extends Controller
         $request->session()->flash('message', 'success|Vous vous êtes bien déconnecté !');
         return redirect(property_exists($this, 'redirectAfterLogout') ? $this->redirectAfterLogout : '/');
     }
-
-    /**
-     * Permet de ré-activer un compte
-     *
-     * @param Request $request
-     * @param int $user_id
-     * @param string $credentials_hash
-     * @param string $deleted_at_hash
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
-    public function enableAccount(Request $request, $user_id, $credentials_hash, $deleted_at_hash) {
-        // Oui, c'est sale, mais c'est pour éviter de dire à un utilisateur malveillant que le compte n'existe pas, existe,
-        // que c'est le hash des credentials qui est mauvais, ou que c'est le hash du deleted_at qui est mauvais
-        // Au final, s'il y a une étape qui a merdée, on lui dit juste que la réactivation était impossible. :-)
-        $error = false;
-
-        // On n'oublie pas le withTrashed(), sinon ça ne renvoie rien
-        $user = User::withTrashed()->find($user_id);
-
-        if($user === null) {
-            $error = true;
-        }
-
-        if(!$error && (
-                $credentials_hash !== $user->getHashedCredentials() ||
-                $deleted_at_hash !== $user->getHashedDeletedAt()
-            )
-        ) {
-            $error = true;
-        }
-
-        if($error) {
-            $request->session()->flash('message', 'danger|La réactivation de ce compte est impossible.');
-        } else {
-            // Réactivation du compte
-            $user->deleted_at = null;
-            $user->update();
-
-            Auth::loginUsingId($user->id);
-
-            $request->session()->flash('message', 'success|Votre compte a été réactivé avec succès !');
-        }
-
-        return redirect(route('index'));
-    }
 }
