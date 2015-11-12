@@ -22,7 +22,7 @@ class UsersController extends Controller {
         return view('profile', [
             'items' => $user->items()->get(),
             'bids' => $user->bids()->with('items')->get(),
-            'credentials_hash' => $useré->getHashedCredentials()
+            'credentials_hash' => $user->getHashedCredentials()
         ]);
     }
 
