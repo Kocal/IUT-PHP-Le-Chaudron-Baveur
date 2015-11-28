@@ -24,6 +24,7 @@ class CreateUsersTable extends Migration
             $table->integer('user_type_id')->unsigned();
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

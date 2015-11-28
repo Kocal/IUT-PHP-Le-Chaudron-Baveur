@@ -49,6 +49,8 @@ class ItemsController extends Controller {
             ->with('category', 'user', 'bids')
             ->paginate(20);
 
+        $items->setPath('/chaudron/items');
+
         foreach($items as $item) {
             $bids = $item->bids();
 
@@ -74,8 +76,8 @@ class ItemsController extends Controller {
         }
 
         return view('items')
-            ->with('items', $items)
-            ->with('sortOptionsDefinitions', $this->sortOptionsDefinitions);
+            ->with('items', $items);
+            //->with('sortOptionsDefinitions', $this->sortOptionsDefinitions);
     }
 
     /**

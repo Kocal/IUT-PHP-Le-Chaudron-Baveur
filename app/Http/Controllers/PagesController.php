@@ -10,6 +10,8 @@ use App\User;
 class PagesController extends Controller {
 
     public function index() {
+	$buyer = null;
+	$seller = null;
         $maxSale = Sales
             ::addSelect('items.id AS id','items.name AS name', 'bids.price AS price', 'bids.user_id AS buyer_id', 'items.user_id AS seller_id')
             ->join('bids', 'sales.bid_id', '=', 'bids.id')
@@ -18,8 +20,10 @@ class PagesController extends Controller {
             ->first()
         ;
 
-        $buyer = User::withTrashed()->find($maxSale->buyer_id);
-        $seller = User::withTrashed()->find($maxSale->seller_id);
+	if($maxSale !== null) {
+            $buyer = User::withTrashed()->find($maxSale->buyer_id);
+            $seller = User::withTrashed()->find($maxSale->seller_id);
+	}
 
         return view('index')
             ->with(compact('maxSale', 'buyer', 'seller'));

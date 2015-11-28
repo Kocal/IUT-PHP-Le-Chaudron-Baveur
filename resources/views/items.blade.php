@@ -44,6 +44,7 @@ setlocale(LC_ALL, 'fr_FR.UTF-8');
     --}}
     {!! $errors->{Session::get('errorBag')}->first('price', '<div class="alert alert-danger">:message</div>') !!}
 
+    @if($items->count() !== 0)
     <table class="table table-responsive table-striped items-table">
         <thead>
             <tr>
@@ -102,6 +103,9 @@ setlocale(LC_ALL, 'fr_FR.UTF-8');
         @endforeach
         </tbody>
     </table>
+    @else
+ 	<div class="alert alert-info">Il n'y a aucune vente en cours</div>
+    @endif
 
     <div class="text-center">
         {!! $items->render() !!}
