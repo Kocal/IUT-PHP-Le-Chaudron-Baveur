@@ -36,4 +36,5 @@ $ npm install
 $ composer install
 $ chmod -R 777 storage
 $ chmod -R 777 public/upload
+$ php artisan key:generate
 ```
